@@ -17,8 +17,10 @@ class LifeCycleSample extends Component {
   // 컴포넌트가 마운트될 때와 업데이트될 때 호출
   static getDerivedStateFromProps(nextProps, prevState) {
     console.log("getDerivedStateFromProps");
-    if (nextProps.color !== prevState.color) {
-      return { color: nextProps.color };
+    console.log("nextProps.color: ", nextProps.propColor);
+    console.log("prevState.color: ", prevState.color);
+    if (nextProps.propColor !== prevState.color) {
+      return { color: nextProps.propColor };
     }
     return null;
   }
@@ -31,6 +33,7 @@ class LifeCycleSample extends Component {
   // 리렌더링을 시작할지 여부를 지정 (false 반환시 업데이트 과정 중지)
   shouldComponentUpdate(nextProps, nextState) {
     console.log("shouldComponentUpdate", nextProps, nextState);
+    console.log("nextState.number % 10 !== 4: ", nextState.number % 10 !== 4);
     // 숫자의 마지막 자리가 4면 리렌더링하지 않습니다.
     return nextState.number % 10 !== 4; // 마지막 자리수가 4이면 리렌더링 취소
   }
@@ -49,7 +52,10 @@ class LifeCycleSample extends Component {
   // render에서 만들어진 결과물이 브라우저에 실제로 반영되기 직전에 호출
   getSnapshotBeforeUpdate(prevProps, prevState) {
     console.log("getSnapshotBeforeUpdate");
-    if (prevProps.color !== this.props.color) {
+    console.log("prevProps: ", prevProps);
+    console.log("prevState: ", prevState);
+    console.log("this.props.propColor: ", this.props.propColor);
+    if (prevProps.propColor !== this.props.propColor) {
       return this.myRef.style.color;
     }
     return null;
@@ -58,20 +64,23 @@ class LifeCycleSample extends Component {
   // 리렌더링을 완료 후 실행
   componentDidUpdate(prevProps, prevState, snapshot) {
     console.log("componentDidUpdate", prevProps, prevState);
+    console.log("snapshot: ", snapshot);
     if (snapshot) {
       console.log("업데이트되기 직전 색상: ", snapshot);
     }
+    console.log("this.myRef.style.color: ", this.myRef.style.color);
   }
 
   render() {
     console.log("render");
 
     const style = {
-      color: this.props.color,
+      color: this.props.propColor,
     };
 
     return (
       <div>
+        {/* {this.props.missing.value} *에러 강제발생 */}
         <h1 style={style} ref={(ref) => (this.myRef = ref)}>
           {this.state.number}
         </h1>
